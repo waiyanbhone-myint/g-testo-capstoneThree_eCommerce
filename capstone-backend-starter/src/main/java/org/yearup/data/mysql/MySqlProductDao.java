@@ -20,11 +20,14 @@ public class MySqlProductDao extends MySqlDaoBase implements ProductDao {
     public List<Product> search(Integer categoryId, BigDecimal minPrice, BigDecimal maxPrice, String color) {
         List<Product> products = new ArrayList<>();
 
+        // ✅ FIXED: Added minPrice condition and fixed maxPrice condition
         String sql = "SELECT * FROM products " +
                 "WHERE (category_id = ? OR ? = -1) " +
+                "   AND (price >= ? OR ? = -1) " +
                 "   AND (price <= ? OR ? = -1) " +
                 "   AND (color = ? OR ? = '') ";
 
+        // Handle null values
         categoryId = categoryId == null ? -1 : categoryId;
         minPrice = minPrice == null ? new BigDecimal("-1") : minPrice;
         maxPrice = maxPrice == null ? new BigDecimal("-1") : maxPrice;
@@ -34,10 +37,12 @@ public class MySqlProductDao extends MySqlDaoBase implements ProductDao {
             PreparedStatement statement = connection.prepareStatement(sql);
             statement.setInt(1, categoryId);
             statement.setInt(2, categoryId);
-            statement.setBigDecimal(3, minPrice);
-            statement.setBigDecimal(4, minPrice);
-            statement.setString(5, color);
-            statement.setString(6, color);
+            statement.setBigDecimal(3, minPrice);           // ✅ Parameter 3: minPrice
+            statement.setBigDecimal(4, minPrice);           // ✅ Parameter 4: minPrice
+            statement.setBigDecimal(5, maxPrice);           // ✅ FIX: Parameter 5: maxPrice (was minPrice!)
+            statement.setBigDecimal(6, maxPrice);           // ✅ FIX: Parameter 6: maxPrice (was minPrice!)
+            statement.setString(7, color);                  // ✅ Parameter 7: color
+            statement.setString(8, color);                  // ✅ Parameter 8: color
 
             ResultSet row = statement.executeQuery();
 
@@ -177,6 +182,11 @@ public class MySqlProductDao extends MySqlDaoBase implements ProductDao {
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    @Override
+    public List<Product> getByCategoryId(int categoryId) {
+        return listByCategoryId(categoryId);
     }
 
     protected static Product mapRow(ResultSet row) throws SQLException {
