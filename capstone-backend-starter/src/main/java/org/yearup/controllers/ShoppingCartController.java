@@ -9,7 +9,7 @@ import org.yearup.data.ShoppingCartDao;
 import org.yearup.data.UserDao;
 import org.yearup.models.ShoppingCart;
 import org.yearup.models.User;
-import org.yearup.UserActivityLogger;
+//import org.yearup.UserActivityLogger;
 
 import java.security.Principal;
 
@@ -34,7 +34,7 @@ public class ShoppingCartController {
     // each method in this controller requires a Principal object as a parameter
     @GetMapping
     public ShoppingCart getCart(Principal principal) {
-        UserActivityLogger.logAction("User %s viewed their cart", principal.getName());
+        //UserActivityLogger.logAction("User %s viewed their cart", principal.getName());
         try {
             // get the currently logged in username
             String userName = principal.getName();
@@ -53,7 +53,7 @@ public class ShoppingCartController {
     // https://localhost:8080/cart/products/15 (15 is the productId to be added
     @PostMapping("products/{productId}")
     public ShoppingCart addToCart(Principal principal, @PathVariable int productId) {
-        UserActivityLogger.logAction("User %s added product %d to cart", principal.getName(), productId);
+        //UserActivityLogger.logAction("User %s added product %d to cart", principal.getName(), productId);
         try {
             String userName = principal.getName();
             User user = userDao.getByUserName(userName);
@@ -80,7 +80,7 @@ public class ShoppingCartController {
     // the BODY should be a ShoppingCartItem - quantity is the only value that will be updated
     @PutMapping("/products/{productId}")
     public ShoppingCart updateCartItem(Principal principal, @PathVariable int productId, @RequestBody CartUpdateRequest request) {
-        UserActivityLogger.logAction("User %s updated product %d quantity to %d", principal.getName(), productId, request.getQuantity());
+        //UserActivityLogger.logAction("User %s updated product %d quantity to %d", principal.getName(), productId, request.getQuantity());
         try {
             String userName = principal.getName();
             User user = userDao.getByUserName(userName);
@@ -101,7 +101,7 @@ public class ShoppingCartController {
     // https://localhost:8080/cart
     @DeleteMapping
     public void clearCart(Principal principal) {
-        UserActivityLogger.logAction("User %s cleared their cart", principal.getName());
+        //UserActivityLogger.logAction("User %s cleared their cart", principal.getName());
         try {
             String userName = principal.getName();
             User user = userDao.getByUserName(userName);
