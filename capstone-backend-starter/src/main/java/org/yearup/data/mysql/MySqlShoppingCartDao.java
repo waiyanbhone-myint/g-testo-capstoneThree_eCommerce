@@ -34,7 +34,7 @@ public class MySqlShoppingCartDao extends MySqlDaoBase implements ShoppingCartDa
             statement.setInt(1, userId);
             ResultSet rs = statement.executeQuery();
 
-            Map<String, ShoppingCartItem> items = new HashMap<>();
+            Map<Integer, ShoppingCartItem> items = new HashMap<>();
 
             while (rs.next()) {
                 Product product = mapRowToProduct(rs);
@@ -44,7 +44,7 @@ public class MySqlShoppingCartDao extends MySqlDaoBase implements ShoppingCartDa
                 item.setProduct(product);
                 item.setQuantity(quantity);
 
-                items.put(String.valueOf(product.getProductId()), item);
+                items.put(product.getProductId(), item);
             }
 
             cart.setItems(items);

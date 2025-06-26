@@ -15,6 +15,8 @@ import java.security.Principal;
 // convert this class to a REST controller
 // only logged in users should have access to these actions
 @RestController
+@RequestMapping("/cart")
+@CrossOrigin
 public class ShoppingCartController {
     // a shopping cart requires
     private ShoppingCartDao shoppingCartDao;
@@ -47,7 +49,7 @@ public class ShoppingCartController {
 
     // add a POST method to add a product to the cart - the url should be
     // https://localhost:8080/cart/products/15 (15 is the productId to be added
-    @PostMapping("/products/{productId}")
+    @PostMapping("products/{productId}")
     public ShoppingCart addToCart(Principal principal, @PathVariable int productId) {
         try {
             String userName = principal.getName();
