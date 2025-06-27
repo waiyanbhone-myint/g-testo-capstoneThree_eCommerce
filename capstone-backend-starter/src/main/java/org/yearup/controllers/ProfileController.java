@@ -5,7 +5,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
-//import org.yearup.UserActivityLogger;
+import org.yearup.UserActivityLogger;
 import org.yearup.data.ProfileDao;
 import org.yearup.data.UserDao;
 import org.yearup.models.Profile;
@@ -33,6 +33,8 @@ public class ProfileController {
     public Profile getProfile(Principal principal) {
         try {
             String userName = principal.getName();
+            UserActivityLogger.logAction("User %s viewed their profile", userName);
+
             User user = userDao.getByUserName(userName);
             int userId = user.getId();
 
@@ -54,13 +56,13 @@ public class ProfileController {
     public Profile updateProfile(Principal principal, @RequestBody Profile profile) {
         try {
             String userName = principal.getName();
+            UserActivityLogger.logAction(userName, "Updating profile information");
+
             User user = userDao.getByUserName(userName);
             int userId = user.getId();
 
-            // Update the profile
             profileDao.update(userId, profile);
 
-            // Return the updated profile
             return profileDao.getByUserId(userId);
 
         } catch (Exception e) {

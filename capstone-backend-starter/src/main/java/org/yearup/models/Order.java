@@ -23,7 +23,6 @@ public class Order {
         this.userId = userId;
     }
 
-    // Getters and Setters
     public int getOrderId() {
         return orderId;
     }
@@ -64,12 +63,10 @@ public class Order {
         this.lineItems = lineItems;
     }
 
-    // Helper method to add line item
     public void addLineItem(OrderLineItem lineItem) {
         this.lineItems.add(lineItem);
     }
 
-    // Helper method to calculate total
     public void calculateTotal() {
         this.total = lineItems.stream()
                 .map(OrderLineItem::getLineTotal)

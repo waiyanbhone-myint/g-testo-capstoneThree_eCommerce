@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
+import org.yearup.UserActivityLogger;
 import org.yearup.data.ProductDao;
 import org.yearup.data.ShoppingCartDao;
 import org.yearup.data.UserDao;
@@ -35,6 +36,7 @@ public class ShoppingCartController {
     @GetMapping
     public ShoppingCart getCart(Principal principal) {
         //UserActivityLogger.logAction("User %s viewed their cart", principal.getName());
+        UserActivityLogger.logAction(principal.getName(), "Viewed their shopping cart");
         try {
             // get the currently logged in username
             String userName = principal.getName();
@@ -54,6 +56,7 @@ public class ShoppingCartController {
     @PostMapping("products/{productId}")
     public ShoppingCart addToCart(Principal principal, @PathVariable int productId) {
         //UserActivityLogger.logAction("User %s added product %d to cart", principal.getName(), productId);
+        UserActivityLogger.logAction(principal.getName(), "Adding product " + productId + " to cart");
         try {
             String userName = principal.getName();
             User user = userDao.getByUserName(userName);
@@ -81,6 +84,7 @@ public class ShoppingCartController {
     @PutMapping("/products/{productId}")
     public ShoppingCart updateCartItem(Principal principal, @PathVariable int productId, @RequestBody CartUpdateRequest request) {
         //UserActivityLogger.logAction("User %s updated product %d quantity to %d", principal.getName(), productId, request.getQuantity());
+        UserActivityLogger.logAction(principal.getName(), "Updating product " + productId + " quantity to " + request.getQuantity());
         try {
             String userName = principal.getName();
             User user = userDao.getByUserName(userName);
@@ -102,6 +106,7 @@ public class ShoppingCartController {
     @DeleteMapping
     public void clearCart(Principal principal) {
         //UserActivityLogger.logAction("User %s cleared their cart", principal.getName());
+        UserActivityLogger.logAction(principal.getName(), "Clearing shopping cart");
         try {
             String userName = principal.getName();
             User user = userDao.getByUserName(userName);

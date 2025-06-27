@@ -22,7 +22,6 @@ public class OrderLineItem {
         this.price = price;
     }
 
-    // Getters and Setters
     public int getOrderId() {
         return orderId;
     }
@@ -75,7 +74,6 @@ public class OrderLineItem {
         this.discountPercent = discountPercent;
     }
 
-    // Calculate line total
     public BigDecimal getLineTotal() {
         BigDecimal basePrice = this.price;
         BigDecimal quantity = new BigDecimal(this.quantity);

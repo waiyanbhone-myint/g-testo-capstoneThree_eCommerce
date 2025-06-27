@@ -5,6 +5,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
+import org.yearup.UserActivityLogger;
 import org.yearup.data.OrderDao;
 import org.yearup.data.ShoppingCartDao;
 import org.yearup.data.UserDao;
@@ -32,27 +33,23 @@ public class OrdersController {
         this.userDao = userDao;
     }
 
-    // POST /orders - Checkout (convert cart to order)
     @PostMapping
     public Order checkout(Principal principal) {
+        UserActivityLogger.logAction(principal.getName(), "Attempting checkout");
         try {
             String userName = principal.getName();
             User user = userDao.getByUserName(userName);
             int userId = user.getId();
 
-            // Get user's current cart
             ShoppingCart cart = shoppingCartDao.getByUserId(userId);
 
-            // Check if cart is empty
             if (cart.getItems().isEmpty()) {
                 throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Cannot checkout with empty cart");
             }
 
-            // Create new order
             Order order = new Order(userId);
             order.setOrderDate(LocalDateTime.now());
 
-            // Convert cart items to order line items
             List<OrderLineItem> lineItems = new ArrayList<>();
 
             for (ShoppingCartItem cartItem : cart.getItems().values()) {
@@ -66,12 +63,10 @@ public class OrdersController {
             }
 
             order.setLineItems(lineItems);
-            order.calculateTotal(); // Calculate total from line items
+            order.calculateTotal();
 
-            // Save order to database
             Order savedOrder = orderDao.create(order);
 
-            // Clear the shopping cart (items are now "purchased")
             shoppingCartDao.clearCart(userId);
 
             return savedOrder;
@@ -83,7 +78,6 @@ public class OrdersController {
         }
     }
 
-    // GET /orders/{id} - Get specific order (bonus feature)
     @GetMapping("/{orderId}")
     public Order getOrder(Principal principal, @PathVariable int orderId) {
         try {
@@ -97,7 +91,6 @@ public class OrdersController {
                 throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Order not found");
             }
 
-            // Security check: users can only see their own orders
             if (order.getUserId() != userId) {
                 throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Access denied");
             }
