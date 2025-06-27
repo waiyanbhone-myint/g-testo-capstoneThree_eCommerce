@@ -5,6 +5,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
+import org.yearup.UserActivityLogger;
 import org.yearup.models.Product;
 import org.yearup.data.ProductDao;
 
@@ -39,6 +40,7 @@ public class ProductsController {
     @GetMapping("{id}")
     @PreAuthorize("permitAll()")
     public Product getById(@PathVariable int id) {
+        UserActivityLogger.logAction("Viewing product details for ID: " + id);
         try {
             var product = productDao.getById(id);
 
